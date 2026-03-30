@@ -48,7 +48,7 @@ export default function RegisterPage() {
       setIsSubmitting(true)
       const result = await register({
         name: form.name.trim(),
-        email: form.email.trim(),
+        login: form.email.trim(),
         password: form.password,
       })
 

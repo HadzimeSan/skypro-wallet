@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+// Для этого курса бекенд расположен на wedev-api.sky.pro.
+// Можно переопределить через VITE_API_BASE_URL в .env.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://wedev-api.sky.pro/api'
 
 const client = axios.create({
   baseURL: API_BASE_URL,
@@ -11,50 +13,25 @@ function normalizeError(error) {
   return new Error(message)
 }
 
-// Fallback для локальной разработки, когда API URL не задан.
-async function mockRegister({ name, email, password }) {
-  const fakeToken = `mock-${btoa(`${email}:${password}`)}`
-  return {
-    user: { name, email },
-    token: fakeToken,
-  }
-}
-
-async function mockLogin({ email, password }) {
-  const fakeToken = `mock-${btoa(`${email}:${password}`)}`
-  return {
-    user: { email },
-    token: fakeToken,
-  }
-}
-
 export async function register(payload) {
-  if (!API_BASE_URL) {
-    return mockRegister(payload)
-  }
-
   try {
-    const { data } = await client.post('/api/auth/register', payload)
-    return {
-      user: data?.user ?? null,
-      token: data?.token,
-    }
+    // API ожидает:
+    // { login, name, password }
+    const { data } = await client.post('/user', payload)
+    const user = data?.user ?? null
+    return { user, token: user?.token ?? data?.token }
   } catch (error) {
     throw normalizeError(error)
   }
 }
 
 export async function login(payload) {
-  if (!API_BASE_URL) {
-    return mockLogin(payload)
-  }
-
   try {
-    const { data } = await client.post('/api/auth/login', payload)
-    return {
-      user: data?.user ?? null,
-      token: data?.token,
-    }
+    // API ожидает:
+    // { login, password }
+    const { data } = await client.post('/user/login', payload)
+    const user = data?.user ?? null
+    return { user, token: user?.token ?? data?.token }
   } catch (error) {
     throw normalizeError(error)
   }

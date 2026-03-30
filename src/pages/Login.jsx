@@ -39,7 +39,7 @@ export default function LoginPage() {
     try {
       setIsSubmitting(true)
       const result = await login({
-        email: form.email.trim(),
+        login: form.email.trim(),
         password: form.password,
       })
 
