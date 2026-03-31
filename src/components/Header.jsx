@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom'
+import { clearToken } from '../utils/authStorage.js'
 
 export default function Header() {
   const { pathname } = useLocation()
@@ -6,6 +7,11 @@ export default function Header() {
 
   const isActive = (path) => pathname === path
   const activeClass = (path) => (isActive(path) ? 'app-btn app-btn--active' : 'app-btn app-btn--ghost')
+
+  const handleLogout = () => {
+    clearToken()
+    navigate('/login')
+  }
 
   return (
     <header className="app-header">
@@ -18,7 +24,7 @@ export default function Header() {
           <button type="button" className={activeClass('/analysis')} onClick={() => navigate('/analysis')}>
             Анализ расходов
           </button>
-          <button type="button" className="app-btn app-btn--ghost" onClick={() => navigate('/login')}>
+          <button type="button" className="app-btn app-btn--ghost" onClick={handleLogout}>
             Выйти
           </button>
         </nav>
