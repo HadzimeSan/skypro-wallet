@@ -77,6 +77,7 @@ export default function RegisterPage() {
             name="name"
             value={form.name}
             placeholder="Иван"
+            autoComplete="name"
             onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
           />
           {errors.name ? <div className="field-error">{errors.name}</div> : null}
@@ -90,6 +91,7 @@ export default function RegisterPage() {
             name="email"
             value={form.email}
             placeholder="name@example.com"
+            autoComplete="username"
             onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
           />
           {errors.email ? <div className="field-error">{errors.email}</div> : null}
@@ -103,6 +105,7 @@ export default function RegisterPage() {
             name="password"
             value={form.password}
             placeholder="••••••••"
+            autoComplete="new-password"
             onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))}
           />
           {errors.password ? <div className="field-error">{errors.password}</div> : null}

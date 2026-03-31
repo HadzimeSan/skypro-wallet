@@ -14,9 +14,9 @@ export default function LoginPage() {
     const nextErrors = {}
 
     if (!form.email.trim()) {
-      nextErrors.email = 'Введите email'
-    } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {
-      nextErrors.email = 'Некорректный формат email'
+      nextErrors.email = 'Введите логин или email'
+    } else if (form.email.trim().length < 3) {
+      nextErrors.email = 'Логин должен быть не короче 3 символов'
     }
 
     if (!form.password) {
@@ -61,13 +61,14 @@ export default function LoginPage() {
       <h1 className="section-title">Вход</h1>
       <form className="form" onSubmit={handleSubmit}>
         <div className="field">
-          <label htmlFor="email">Эл. почта</label>
+          <label htmlFor="email">Логин или эл. почта</label>
           <input
             id="email"
-            type="email"
+            type="text"
             name="email"
             value={form.email}
-            placeholder="name@example.com"
+            placeholder="admin или name@example.com"
+            autoComplete="username"
             onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
           />
           {errors.email ? <div className="field-error">{errors.email}</div> : null}
@@ -81,6 +82,7 @@ export default function LoginPage() {
             name="password"
             value={form.password}
             placeholder="••••••••"
+            autoComplete="current-password"
             onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))}
           />
           {errors.password ? <div className="field-error">{errors.password}</div> : null}

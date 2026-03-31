@@ -9,7 +9,11 @@ const client = axios.create({
 })
 
 function normalizeError(error) {
-  const message = error?.response?.data?.message || error?.message || 'Ошибка запроса'
+  const message =
+    error?.response?.data?.error ||
+    error?.response?.data?.message ||
+    error?.message ||
+    'Ошибка запроса'
   return new Error(message)
 }
 
@@ -17,7 +21,10 @@ export async function register(payload) {
   try {
     // API ожидает:
     // { login, name, password }
-    const { data } = await client.post('/user', payload)
+    // API проекта ожидает строку JSON (сервер парсит req.body через JSON.parse).
+    const { data } = await client.post('/user', JSON.stringify(payload), {
+      headers: { 'Content-Type': 'text/plain' },
+    })
     const user = data?.user ?? null
     return { user, token: user?.token ?? data?.token }
   } catch (error) {
@@ -29,7 +36,9 @@ export async function login(payload) {
   try {
     // API ожидает:
     // { login, password }
-    const { data } = await client.post('/user/login', payload)
+    const { data } = await client.post('/user/login', JSON.stringify(payload), {
+      headers: { 'Content-Type': 'text/plain' },
+    })
     const user = data?.user ?? null
     return { user, token: user?.token ?? data?.token }
   } catch (error) {
