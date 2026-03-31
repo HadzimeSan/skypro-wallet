@@ -17,20 +17,26 @@ export default function RegisterPage() {
   const validate = () => {
     const nextErrors = {}
 
-    if (!form.name.trim()) {
+    const name = form.name.trim()
+    const emailOrLogin = form.email.trim()
+    const password = form.password
+
+    if (!name) {
       nextErrors.name = 'Введите имя'
+    } else if (name.length < 3) {
+      nextErrors.name = 'Имя должно быть не короче 3 символов'
     }
 
-    if (!form.email.trim()) {
-      nextErrors.email = 'Введите email'
-    } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {
-      nextErrors.email = 'Некорректный формат email'
+    if (!emailOrLogin) {
+      nextErrors.email = 'Введите логин'
+    } else if (emailOrLogin.length < 3) {
+      nextErrors.email = 'Логин должен быть не короче 3 символов'
     }
 
-    if (!form.password) {
+    if (!password) {
       nextErrors.password = 'Введите пароль'
-    } else if (form.password.length < 8 || !/[A-Z]/.test(form.password) || !/\d/.test(form.password)) {
-      nextErrors.password = 'Пароль: минимум 8 символов, 1 цифра и 1 заглавная буква'
+    } else if (password.length < 3) {
+      nextErrors.password = 'Пароль должен быть не короче 3 символов'
     }
 
     return nextErrors
@@ -94,7 +100,7 @@ export default function RegisterPage() {
             autoComplete="username"
             onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
           />
-          {errors.email ? <div className="field-error">{errors.email}</div> : null}
+            {errors.email ? <div className="field-error">{errors.email}</div> : null}
         </div>
 
         <div className="field">
