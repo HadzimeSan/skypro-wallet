@@ -6,7 +6,7 @@ export default function Header() {
   const navigate = useNavigate()
 
   const isActive = (path) => pathname === path
-  const navClass = (path) => (isActive(path) ? 'app-header__link app-header__link--active' : 'app-header__link')
+  const activeClass = (path) => (isActive(path) ? 'app-btn app-btn--active' : 'app-btn app-btn--ghost')
 
   const handleLogout = () => {
     clearToken()
@@ -18,13 +18,13 @@ export default function Header() {
       <div className="app-header__inner">
         <div className="app-header__brand">SkyproWallet</div>
         <nav className="app-header__nav" aria-label="Навигация">
-          <button type="button" className={navClass('/expenses')} onClick={() => navigate('/expenses')}>
+          <button type="button" className={activeClass('/expenses')} onClick={() => navigate('/expenses')}>
             Мои расходы
           </button>
-          <button type="button" className={navClass('/analysis')} onClick={() => navigate('/analysis')}>
+          <button type="button" className={activeClass('/analysis')} onClick={() => navigate('/analysis')}>
             Анализ расходов
           </button>
-          <button type="button" className="app-header__link" onClick={handleLogout}>
+          <button type="button" className="app-btn app-btn--ghost" onClick={handleLogout}>
             Выйти
           </button>
         </nav>
