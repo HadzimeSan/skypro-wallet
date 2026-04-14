@@ -1,6 +1,21 @@
 import { useMemo, useState } from 'react'
 
-const CATEGORIES = ['Еда', 'Транспорт', 'Другое']
+import bagIcon from '../../../bag.png'
+import carIcon from '../../../car.png'
+import houseIcon from '../../../house.png'
+import gameboyIcon from '../../../gameboy.png'
+import educationIcon from '../../../Vector.png'
+import otherIcon from '../../../message-text.png'
+import selectedCategoryIcon from '../../../Frame 1511838850.png'
+
+const CATEGORIES = [
+  { label: 'Еда', icon: bagIcon },
+  { label: 'Транспорт', icon: carIcon },
+  { label: 'Жилье', icon: houseIcon },
+  { label: 'Развлечения', icon: gameboyIcon },
+  { label: 'Образование', icon: educationIcon },
+  { label: 'Другое', icon: otherIcon },
+]
 
 function sumByCategory(items) {
   return items.reduce((acc, item) => {
@@ -18,9 +33,6 @@ export default function ExpensesPage() {
     { id: 2, date: '2026-03-03', category: 'Транспорт', description: 'Проезд', amount: 120 },
     { id: 3, date: '2026-03-10', category: 'Другое', description: 'Покупка', amount: 980 },
   ])
-
-  const [editId, setEditId] = useState(null)
-  const [draft, setDraft] = useState({ description: '', amount: '' })
 
   const [newExpense, setNewExpense] = useState({
     date: '2026-03-23',
@@ -51,28 +63,6 @@ export default function ExpensesPage() {
   const totalSum = visibleExpenses.reduce((acc, item) => acc + item.amount, 0)
   const categorySums = sumByCategory(visibleExpenses)
 
-  const startEdit = (item) => {
-    setEditId(item.id)
-    setDraft({ description: item.description, amount: String(item.amount) })
-  }
-
-  const cancelEdit = () => {
-    setEditId(null)
-    setDraft({ description: '', amount: '' })
-  }
-
-  const saveEdit = (id) => {
-    const amount = Number(draft.amount)
-    setExpenses((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, description: draft.description.trim(), amount: Number.isFinite(amount) ? amount : item.amount }
-          : item,
-      ),
-    )
-    cancelEdit()
-  }
-
   const submitNew = (e) => {
     e.preventDefault()
     const amount = Number(newExpense.amount)
@@ -95,8 +85,6 @@ export default function ExpensesPage() {
   return (
     <div className="page expenses-page">
       <h1 className="section-title expenses-title">Мои расходы</h1>
-      <p className="expenses-subtitle">Форма расходов</p>
-
       <div className="expenses-layout">
         <section className="card card--table">
           <h2 className="card-title">Таблица расходов</h2>
@@ -111,8 +99,8 @@ export default function ExpensesPage() {
               >
                 <option value="Все">Все</option>
                 {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
+                  <option key={c.label} value={c.label}>
+                    {c.label}
                   </option>
                 ))}
               </select>
@@ -136,8 +124,8 @@ export default function ExpensesPage() {
             </div>
             <div className="metric-categories">
               {CATEGORIES.map((c) => (
-                <span key={c}>
-                  {c}: {categorySums[c] || 0} ₽
+                <span key={c.label}>
+                  {c.label}: {categorySums[c.label] || 0} ₽
                 </span>
               ))}
             </div>
@@ -146,66 +134,25 @@ export default function ExpensesPage() {
           <table className="table">
           <thead>
             <tr>
-              <th>Дата</th>
               <th>Категория</th>
               <th>Описание</th>
+              <th>Дата</th>
               <th>Сумма</th>
-              <th>Действия</th>
+              <th className="cell-icon-header"></th>
             </tr>
           </thead>
           <tbody>
             {visibleExpenses.map((item) => {
-              const isEditing = editId === item.id
               return (
-                <tr key={item.id} className={isEditing ? 'expense-row--editing' : undefined}>
-                  <td>{item.date}</td>
+                <tr key={item.id}>
                   <td>{item.category}</td>
+                  <td>{item.description}</td>
+                  <td>{item.date}</td>
+                  <td>{`${item.amount} ₽`}</td>
                   <td>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={draft.description}
-                        onChange={(e) => setDraft((p) => ({ ...p, description: e.target.value }))}
-                      />
-                    ) : (
-                      item.description
-                    )}
-                  </td>
-                  <td>
-                    {isEditing ? (
-                      <input
-                        type="number"
-                        value={draft.amount}
-                        onChange={(e) => setDraft((p) => ({ ...p, amount: e.target.value }))}
-                      />
-                    ) : (
-                      `${item.amount} ₽`
-                    )}
-                  </td>
-                  <td>
-                    {isEditing ? (
-                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                        <button className="btn-small" type="button" onClick={() => saveEdit(item.id)}>
-                          Сохранить
-                        </button>
-                        <button className="btn-small" type="button" onClick={cancelEdit}>
-                          Отмена
-                        </button>
-                      </div>
-                    ) : (
-                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                        <button className="btn-small" type="button" onClick={() => startEdit(item)}>
-                          Редактировать
-                        </button>
-                        <button
-                          className="btn-small btn-small--danger"
-                          type="button"
-                          onClick={() => setExpenses((prev) => prev.filter((x) => x.id !== item.id))}
-                        >
-                          Удалить
-                        </button>
-                      </div>
-                    )}
+                    <div className="cell-icon-wrap">
+                      <img src={selectedCategoryIcon} alt="" className="cell-icon" />
+                    </div>
                   </td>
                 </tr>
               )
@@ -230,17 +177,24 @@ export default function ExpensesPage() {
 
             <div className="field">
               <label htmlFor="new-category">Категория</label>
-              <select
-                id="new-category"
-                value={newExpense.category}
-                onChange={(e) => setNewExpense((p) => ({ ...p, category: e.target.value }))}
-              >
-                {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
+              <div id="new-category" className="category-chips" role="radiogroup" aria-label="Категория">
+                {CATEGORIES.map((category) => {
+                  const isActive = newExpense.category === category.label
+                  return (
+                    <button
+                      key={category.label}
+                      type="button"
+                      role="radio"
+                      aria-checked={isActive}
+                      className={isActive ? 'category-chip category-chip--active' : 'category-chip'}
+                      onClick={() => setNewExpense((p) => ({ ...p, category: category.label }))}
+                    >
+                      <img src={category.icon} alt="" className="category-chip__icon" />
+                      <span>{category.label}</span>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
 
             <div className="field">

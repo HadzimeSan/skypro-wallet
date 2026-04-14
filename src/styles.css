@@ -265,12 +265,6 @@ textarea {
   font-weight: 700;
 }
 
-.expenses-subtitle {
-  color: #6b7280;
-  font-size: 13px;
-  margin-bottom: 18px;
-}
-
 .expenses-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
@@ -335,6 +329,58 @@ textarea {
   align-items: center;
   font-size: 12px;
   color: #4b5563;
+}
+
+.cell-icon-header {
+  width: 44px;
+}
+
+.cell-icon-wrap {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.cell-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.category-chip {
+  width: 89px;
+  min-height: 31px;
+  border-radius: 30px;
+  opacity: 1;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #111827;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.category-chip--active {
+  background: #ebf7ee;
+  border-color: #9fdab0;
+  color: #2d7c48;
+}
+
+.category-chip__icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
 }
 
 @media (max-width: 980px) {
