@@ -17,17 +17,7 @@ const CATEGORIES = [
   { label: 'Другое', icon: otherIcon },
 ]
 
-function sumByCategory(items) {
-  return items.reduce((acc, item) => {
-    acc[item.category] = (acc[item.category] || 0) + item.amount
-    return acc
-  }, {})
-}
-
 export default function ExpensesPage() {
-  const [filterCategory, setFilterCategory] = useState('Все')
-  const [sortMode, setSortMode] = useState('date-desc')
-
   const [expenses, setExpenses] = useState([
     { id: 1, date: '2026-03-01', category: 'Еда', description: 'Обед', amount: 650 },
     { id: 2, date: '2026-03-03', category: 'Транспорт', description: 'Проезд', amount: 120 },
@@ -41,27 +31,10 @@ export default function ExpensesPage() {
     amount: '',
   })
 
-  const visibleExpenses = useMemo(() => {
-    let items = expenses
-
-    if (filterCategory !== 'Все') {
-      items = items.filter((i) => i.category === filterCategory)
-    }
-
-    items = [...items]
-    items.sort((a, b) => {
-      if (sortMode === 'date-desc') return b.date.localeCompare(a.date)
-      if (sortMode === 'date-asc') return a.date.localeCompare(b.date)
-      if (sortMode === 'amount-desc') return b.amount - a.amount
-      if (sortMode === 'amount-asc') return a.amount - b.amount
-      return 0
-    })
-
-    return items
-  }, [expenses, filterCategory, sortMode])
-
-  const totalSum = visibleExpenses.reduce((acc, item) => acc + item.amount, 0)
-  const categorySums = sumByCategory(visibleExpenses)
+  const visibleExpenses = useMemo(
+    () => [...expenses].sort((a, b) => b.date.localeCompare(a.date)),
+    [expenses],
+  )
 
   const submitNew = (e) => {
     e.preventDefault()
@@ -89,53 +62,11 @@ export default function ExpensesPage() {
         <section className="card card--table">
           <h2 className="card-title">Таблица расходов</h2>
 
-          <div className="row" style={{ marginBottom: 8 }}>
-            <div className="field select">
-              <label htmlFor="filter-category">Категория</label>
-              <select
-                id="filter-category"
-                value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
-              >
-                <option value="Все">Все</option>
-                {CATEGORIES.map((c) => (
-                  <option key={c.label} value={c.label}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="field select">
-              <label htmlFor="sort-mode">Сортировка</label>
-              <select id="sort-mode" value={sortMode} onChange={(e) => setSortMode(e.target.value)}>
-                <option value="date-desc">Сначала новые</option>
-                <option value="date-asc">Сначала старые</option>
-                <option value="amount-desc">Сумма (больше)</option>
-                <option value="amount-asc">Сумма (меньше)</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="expenses-metrics">
-            <div>
-              <div className="metric-caption">Общая сумма</div>
-              <div className="metric-value">{totalSum} ₽</div>
-            </div>
-            <div className="metric-categories">
-              {CATEGORIES.map((c) => (
-                <span key={c.label}>
-                  {c.label}: {categorySums[c.label] || 0} ₽
-                </span>
-              ))}
-            </div>
-          </div>
-
           <table className="table">
           <thead>
             <tr>
-              <th>Категория</th>
               <th>Описание</th>
+              <th>Категория</th>
               <th>Дата</th>
               <th>Сумма</th>
               <th className="cell-icon-header"></th>
@@ -145,8 +76,8 @@ export default function ExpensesPage() {
             {visibleExpenses.map((item) => {
               return (
                 <tr key={item.id}>
-                  <td>{item.category}</td>
                   <td>{item.description}</td>
+                  <td>{item.category}</td>
                   <td>{item.date}</td>
                   <td>{`${item.amount} ₽`}</td>
                   <td>

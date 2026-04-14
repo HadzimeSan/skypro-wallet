@@ -302,6 +302,15 @@ textarea {
   border-radius: 10px;
   border: 1px solid #e5e7eb;
   font-size: 13px;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.card--form input:focus,
+.card--form select:focus {
+  border-color: #b89af6;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.12);
+  background: #f5efff;
+  outline: none;
 }
 
 .expenses-metrics {
@@ -372,9 +381,9 @@ textarea {
 }
 
 .category-chip--active {
-  background: #ebf7ee;
-  border-color: #9fdab0;
-  color: #2d7c48;
+  background: #f0eaff;
+  border-color: #c4b0ff;
+  color: #7c3aed;
 }
 
 .category-chip__icon {
