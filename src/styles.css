@@ -5,17 +5,14 @@
 }
 
 .app-main {
-  padding: 24px 16px 64px;
+  padding: 24px 20px 64px;
   text-align: left;
-  max-width: 1120px;
+  max-width: 1140px;
   margin: 0 auto;
 }
 
 .app-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: var(--bg);
+  background: #fff;
   border-bottom: 1px solid var(--border);
 }
 
@@ -30,15 +27,30 @@
 }
 
 .app-header__brand {
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 14px;
   color: var(--text-h);
 }
 
 .app-header__nav {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
   flex-wrap: wrap;
+}
+
+.app-header__link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.app-header__link--active {
+  color: #5b34d2;
 }
 
 .app-btn {
@@ -56,6 +68,13 @@
   opacity: 0.65;
 }
 
+.app-btn--primary {
+  width: 100%;
+  border: none;
+  color: #fff;
+  background: #6d3df0;
+}
+
 .app-btn--ghost {
   background: transparent;
   border: 1px solid var(--border);
@@ -68,7 +87,7 @@
 }
 
 .page {
-  max-width: 920px;
+  max-width: 100%;
 }
 
 .auth {
@@ -138,11 +157,12 @@ textarea {
   width: 100%;
   border-collapse: collapse;
   margin-top: 16px;
+  font-size: 13px;
 }
 
 .table th,
 .table td {
-  padding: 10px 8px;
+  padding: 8px 6px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -156,11 +176,12 @@ textarea {
 }
 
 .btn-small {
-  padding: 8px 10px;
-  border-radius: 10px;
+  padding: 5px 8px;
+  border-radius: 8px;
   border: 1px solid var(--border);
   background: #fff;
   cursor: pointer;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -239,5 +260,79 @@ textarea {
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 14px;
+}
+
+.expenses-page__header {
+  margin-bottom: 18px;
+}
+
+.expenses-page__header .section-title {
+  margin: 0;
+  font-size: 36px;
+  letter-spacing: -0.8px;
+}
+
+.expenses-page__subtitle {
+  margin-top: 6px;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.expenses-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 18px;
+  align-items: start;
+}
+
+.expenses-card {
+  background: #fff;
+  border: 1px solid #ececf1;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.expenses-card__title {
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.expenses-filters {
+  margin-bottom: 8px;
+}
+
+.expenses-summary {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.expenses-summary__item {
+  font-size: 13px;
+}
+
+.expenses-summary__label {
+  color: #6b7280;
+  margin-bottom: 3px;
+}
+
+.expenses-summary__value {
+  font-weight: 700;
+  color: #111827;
+}
+
+.expenses-summary__categories {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 980px) {
+  .expenses-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
