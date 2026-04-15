@@ -26,7 +26,7 @@ export default function ExpensesPage() {
 
   const [newExpense, setNewExpense] = useState({
     date: '2026-03-23',
-    category: 'Еда',
+    category: '',
     description: '',
     amount: '',
   })
@@ -39,7 +39,9 @@ export default function ExpensesPage() {
   const submitNew = (e) => {
     e.preventDefault()
     const amount = Number(newExpense.amount)
-    if (!newExpense.description.trim() || !Number.isFinite(amount)) return
+    if (!newExpense.description.trim() || !newExpense.category || !newExpense.date || !Number.isFinite(amount) || amount <= 0) {
+      return
+    }
 
     setExpenses((prev) => [
       ...prev,
@@ -52,8 +54,14 @@ export default function ExpensesPage() {
       },
     ])
 
-    setNewExpense({ date: newExpense.date, category: newExpense.category, description: '', amount: '' })
+    setNewExpense({ date: newExpense.date, category: '', description: '', amount: '' })
   }
+
+  const isDescriptionValid = newExpense.description.trim().length > 0
+  const isDateValid = newExpense.date.trim().length > 0
+  const isAmountValid = Number.isFinite(Number(newExpense.amount)) && Number(newExpense.amount) > 0
+  const isCategoryValid = Boolean(newExpense.category)
+  const isFormValid = isDescriptionValid && isDateValid && isAmountValid && isCategoryValid
 
   return (
     <div className="page expenses-page">
@@ -82,7 +90,14 @@ export default function ExpensesPage() {
                   <td>{`${item.amount} ₽`}</td>
                   <td>
                     <div className="cell-icon-wrap">
-                      <img src={selectedCategoryIcon} alt="" className="cell-icon" />
+                      <button
+                        type="button"
+                        className="icon-delete-btn"
+                        onClick={() => setExpenses((prev) => prev.filter((x) => x.id !== item.id))}
+                        aria-label={`Удалить расход ${item.description}`}
+                      >
+                        <img src={selectedCategoryIcon} alt="" className="cell-icon" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -100,6 +115,7 @@ export default function ExpensesPage() {
               <input
                 id="new-description"
                 type="text"
+                className={isDescriptionValid ? 'input-ok' : ''}
                 value={newExpense.description}
                 placeholder="Введите описание"
                 onChange={(e) => setNewExpense((p) => ({ ...p, description: e.target.value }))}
@@ -133,6 +149,7 @@ export default function ExpensesPage() {
               <input
                 id="new-date"
                 type="date"
+                className={isDateValid ? 'input-ok' : ''}
                 value={newExpense.date}
                 onChange={(e) => setNewExpense((p) => ({ ...p, date: e.target.value }))}
               />
@@ -143,6 +160,7 @@ export default function ExpensesPage() {
               <input
                 id="new-amount"
                 type="number"
+                className={isAmountValid ? 'input-ok' : ''}
                 value={newExpense.amount}
                 placeholder="Введите сумму"
                 onChange={(e) => setNewExpense((p) => ({ ...p, amount: e.target.value }))}
@@ -150,7 +168,7 @@ export default function ExpensesPage() {
             </div>
 
             <div className="form__actions">
-              <button className="app-btn app-btn--primary" type="submit">
+              <button className="app-btn app-btn--primary" type="submit" disabled={!isFormValid}>
                 Добавить новый расход
               </button>
             </div>

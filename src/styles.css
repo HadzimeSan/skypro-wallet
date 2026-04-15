@@ -260,7 +260,7 @@ textarea {
 }
 
 .expenses-title {
-  margin-bottom: 2px;
+  margin-bottom: 64px;
   font-size: 38px;
   font-weight: 700;
 }
@@ -313,6 +313,12 @@ textarea {
   outline: none;
 }
 
+.input-ok {
+  border-color: #7c3aed !important;
+  background: #f5efff !important;
+  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.2);
+}
+
 .expenses-metrics {
   display: flex;
   justify-content: space-between;
@@ -350,6 +356,16 @@ textarea {
   align-items: center;
 }
 
+.icon-delete-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .cell-icon {
   width: 20px;
   height: 20px;
@@ -363,12 +379,11 @@ textarea {
 }
 
 .category-chip {
-  width: 89px;
   min-height: 31px;
   border-radius: 30px;
   opacity: 1;
   gap: 6px;
-  padding: 8px 12px;
+  padding: 8px 20px;
   border: 1px solid #d1d5db;
   background: #fff;
   color: #111827;
