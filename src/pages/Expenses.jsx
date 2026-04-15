@@ -1,82 +1,47 @@
 import { useMemo, useState } from 'react'
 
-const CATEGORIES = ['Еда', 'Транспорт', 'Другое']
+import bagIcon from '../assets/icons/bag.png'
+import carIcon from '../assets/icons/car.png'
+import houseIcon from '../assets/icons/house.png'
+import gameboyIcon from '../assets/icons/gameboy.png'
+import educationIcon from '../assets/icons/Vector.png'
+import otherIcon from '../assets/icons/message-text.png'
+import selectedCategoryIcon from '../assets/icons/Frame 1511838850.png'
 
-function sumByCategory(items) {
-  return items.reduce((acc, item) => {
-    acc[item.category] = (acc[item.category] || 0) + item.amount
-    return acc
-  }, {})
-}
+const CATEGORIES = [
+  { label: 'Еда', icon: bagIcon },
+  { label: 'Транспорт', icon: carIcon },
+  { label: 'Жилье', icon: houseIcon },
+  { label: 'Развлечения', icon: gameboyIcon },
+  { label: 'Образование', icon: educationIcon },
+  { label: 'Другое', icon: otherIcon },
+]
 
 export default function ExpensesPage() {
-  const [filterCategory, setFilterCategory] = useState('Все')
-  const [sortMode, setSortMode] = useState('date-desc')
-
   const [expenses, setExpenses] = useState([
     { id: 1, date: '2026-03-01', category: 'Еда', description: 'Обед', amount: 650 },
     { id: 2, date: '2026-03-03', category: 'Транспорт', description: 'Проезд', amount: 120 },
     { id: 3, date: '2026-03-10', category: 'Другое', description: 'Покупка', amount: 980 },
   ])
 
-  const [editId, setEditId] = useState(null)
-  const [draft, setDraft] = useState({ description: '', amount: '' })
-
   const [newExpense, setNewExpense] = useState({
     date: '2026-03-23',
-    category: 'Еда',
+    category: '',
     description: '',
     amount: '',
   })
 
-  const visibleExpenses = useMemo(() => {
-    let items = expenses
-
-    if (filterCategory !== 'Все') {
-      items = items.filter((i) => i.category === filterCategory)
-    }
-
-    items = [...items]
-    items.sort((a, b) => {
-      if (sortMode === 'date-desc') return b.date.localeCompare(a.date)
-      if (sortMode === 'date-asc') return a.date.localeCompare(b.date)
-      if (sortMode === 'amount-desc') return b.amount - a.amount
-      if (sortMode === 'amount-asc') return a.amount - b.amount
-      return 0
-    })
-
-    return items
-  }, [expenses, filterCategory, sortMode])
-
-  const totalSum = visibleExpenses.reduce((acc, item) => acc + item.amount, 0)
-  const categorySums = sumByCategory(visibleExpenses)
-
-  const startEdit = (item) => {
-    setEditId(item.id)
-    setDraft({ description: item.description, amount: String(item.amount) })
-  }
-
-  const cancelEdit = () => {
-    setEditId(null)
-    setDraft({ description: '', amount: '' })
-  }
-
-  const saveEdit = (id) => {
-    const amount = Number(draft.amount)
-    setExpenses((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, description: draft.description.trim(), amount: Number.isFinite(amount) ? amount : item.amount }
-          : item,
-      ),
-    )
-    cancelEdit()
-  }
+  const visibleExpenses = useMemo(
+    () => [...expenses].sort((a, b) => b.date.localeCompare(a.date)),
+    [expenses],
+  )
 
   const submitNew = (e) => {
     e.preventDefault()
     const amount = Number(newExpense.amount)
-    if (!newExpense.description.trim() || !Number.isFinite(amount)) return
+    if (!newExpense.description.trim() || !newExpense.category || !newExpense.date || !Number.isFinite(amount) || amount <= 0) {
+      return
+    }
 
     setExpenses((prev) => [
       ...prev,
@@ -89,193 +54,127 @@ export default function ExpensesPage() {
       },
     ])
 
-    setNewExpense({ date: newExpense.date, category: newExpense.category, description: '', amount: '' })
+    setNewExpense({ date: newExpense.date, category: '', description: '', amount: '' })
   }
 
+  const isDescriptionValid = newExpense.description.trim().length > 0
+  const isDateValid = newExpense.date.trim().length > 0
+  const isAmountValid = Number.isFinite(Number(newExpense.amount)) && Number(newExpense.amount) > 0
+  const isCategoryValid = Boolean(newExpense.category)
+  const isFormValid = isDescriptionValid && isDateValid && isAmountValid && isCategoryValid
+
   return (
-    <div className="page">
-      <h1 className="section-title">Мои расходы</h1>
+    <div className="page expenses-page">
+      <h1 className="section-title expenses-title">Мои расходы</h1>
+      <div className="expenses-layout">
+        <section className="card card--table">
+          <h2 className="card-title">Таблица расходов</h2>
 
-      <section>
-        <h2 className="section-title" style={{ fontSize: 20, marginBottom: 10 }}>
-          Форма добавления
-        </h2>
-        <form className="form" onSubmit={submitNew}>
-          <div className="row">
-            <div className="field select">
-              <label htmlFor="new-category">Категория</label>
-              <select
-                id="new-category"
-                value={newExpense.category}
-                onChange={(e) => setNewExpense((p) => ({ ...p, category: e.target.value }))}
-              >
-                {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="field">
-              <label htmlFor="new-date">Дата</label>
-              <input
-                id="new-date"
-                type="date"
-                value={newExpense.date}
-                onChange={(e) => setNewExpense((p) => ({ ...p, date: e.target.value }))}
-              />
-            </div>
-          </div>
-
-          <div className="field">
-            <label htmlFor="new-description">Описание</label>
-            <input
-              id="new-description"
-              type="text"
-              value={newExpense.description}
-              placeholder="Например, ужин"
-              onChange={(e) => setNewExpense((p) => ({ ...p, description: e.target.value }))}
-            />
-          </div>
-
-          <div className="field">
-            <label htmlFor="new-amount">Сумма</label>
-            <input
-              id="new-amount"
-              type="number"
-              value={newExpense.amount}
-              placeholder="0"
-              onChange={(e) => setNewExpense((p) => ({ ...p, amount: e.target.value }))}
-            />
-          </div>
-
-          <div className="form__actions">
-            <button className="app-btn" type="submit">
-              Добавить расход
-            </button>
-          </div>
-        </form>
-      </section>
-
-      <section style={{ marginTop: 26 }}>
-        <h2 className="section-title" style={{ fontSize: 20, marginBottom: 10 }}>
-          Фильтры и таблица
-        </h2>
-        <div className="row" style={{ marginBottom: 8 }}>
-          <div className="field select">
-            <label htmlFor="filter-category">Категория</label>
-            <select
-              id="filter-category"
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-            >
-              <option value="Все">Все</option>
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="field select">
-            <label htmlFor="sort-mode">Сортировка</label>
-            <select id="sort-mode" value={sortMode} onChange={(e) => setSortMode(e.target.value)}>
-              <option value="date-desc">Дата (сначала новые)</option>
-              <option value="date-asc">Дата (сначала старые)</option>
-              <option value="amount-desc">Сумма (больше)</option>
-              <option value="amount-asc">Сумма (меньше)</option>
-            </select>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 6 }}>
-          <div>
-            <div style={{ fontWeight: 800 }}>Общая сумма</div>
-            <div style={{ fontSize: 20, color: '#0f5132' }}>{totalSum} ₽</div>
-          </div>
-          <div>
-            <div style={{ fontWeight: 800 }}>По категориям</div>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 4 }}>
-              {CATEGORIES.map((c) => (
-                <div key={c} style={{ color: '#0f5132' }}>
-                  {c}: {categorySums[c] || 0} ₽
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <table className="table">
+          <table className="table">
           <thead>
             <tr>
-              <th>Дата</th>
-              <th>Категория</th>
               <th>Описание</th>
+              <th>Категория</th>
+              <th>Дата</th>
               <th>Сумма</th>
-              <th>Действия</th>
+              <th className="cell-icon-header"></th>
             </tr>
           </thead>
           <tbody>
             {visibleExpenses.map((item) => {
-              const isEditing = editId === item.id
               return (
-                <tr key={item.id} className={isEditing ? 'expense-row--editing' : undefined}>
-                  <td>{item.date}</td>
+                <tr key={item.id}>
+                  <td>{item.description}</td>
                   <td>{item.category}</td>
+                  <td>{item.date}</td>
+                  <td>{`${item.amount} ₽`}</td>
                   <td>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={draft.description}
-                        onChange={(e) => setDraft((p) => ({ ...p, description: e.target.value }))}
-                      />
-                    ) : (
-                      item.description
-                    )}
-                  </td>
-                  <td>
-                    {isEditing ? (
-                      <input
-                        type="number"
-                        value={draft.amount}
-                        onChange={(e) => setDraft((p) => ({ ...p, amount: e.target.value }))}
-                      />
-                    ) : (
-                      `${item.amount} ₽`
-                    )}
-                  </td>
-                  <td>
-                    {isEditing ? (
-                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                        <button className="btn-small" type="button" onClick={() => saveEdit(item.id)}>
-                          Сохранить
-                        </button>
-                        <button className="btn-small" type="button" onClick={cancelEdit}>
-                          Отмена
-                        </button>
-                      </div>
-                    ) : (
-                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                        <button className="btn-small" type="button" onClick={() => startEdit(item)}>
-                          Редактировать
-                        </button>
-                        <button
-                          className="btn-small btn-small--danger"
-                          type="button"
-                          onClick={() => setExpenses((prev) => prev.filter((x) => x.id !== item.id))}
-                        >
-                          Удалить
-                        </button>
-                      </div>
-                    )}
+                    <div className="cell-icon-wrap">
+                      <button
+                        type="button"
+                        className="icon-delete-btn"
+                        onClick={() => setExpenses((prev) => prev.filter((x) => x.id !== item.id))}
+                        aria-label={`Удалить расход ${item.description}`}
+                      >
+                        <img src={selectedCategoryIcon} alt="" className="cell-icon" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               )
             })}
           </tbody>
         </table>
-      </section>
+        </section>
+
+        <section className="card card--form">
+          <h2 className="card-title">Новый расход</h2>
+          <form className="form" onSubmit={submitNew}>
+            <div className="field">
+              <label htmlFor="new-description">Описание</label>
+              <input
+                id="new-description"
+                type="text"
+                className={isDescriptionValid ? 'input-ok' : ''}
+                value={newExpense.description}
+                placeholder="Введите описание"
+                onChange={(e) => setNewExpense((p) => ({ ...p, description: e.target.value }))}
+              />
+            </div>
+
+            <div className="field">
+              <label htmlFor="new-category">Категория</label>
+              <div id="new-category" className="category-chips" role="radiogroup" aria-label="Категория">
+                {CATEGORIES.map((category) => {
+                  const isActive = newExpense.category === category.label
+                  return (
+                    <button
+                      key={category.label}
+                      type="button"
+                      role="radio"
+                      aria-checked={isActive}
+                      className={isActive ? 'category-chip category-chip--active' : 'category-chip'}
+                      onClick={() => setNewExpense((p) => ({ ...p, category: category.label }))}
+                    >
+                      <img src={category.icon} alt="" className="category-chip__icon" />
+                      <span>{category.label}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div className="field">
+              <label htmlFor="new-date">Дата</label>
+              <input
+                id="new-date"
+                type="date"
+                className={isDateValid ? 'input-ok' : ''}
+                value={newExpense.date}
+                onChange={(e) => setNewExpense((p) => ({ ...p, date: e.target.value }))}
+              />
+            </div>
+
+            <div className="field">
+              <label htmlFor="new-amount">Сумма</label>
+              <input
+                id="new-amount"
+                type="number"
+                className={isAmountValid ? 'input-ok' : ''}
+                value={newExpense.amount}
+                placeholder="Введите сумму"
+                onChange={(e) => setNewExpense((p) => ({ ...p, amount: e.target.value }))}
+              />
+            </div>
+
+            <div className="form__actions">
+              <button className="app-btn app-btn--primary" type="submit" disabled={!isFormValid}>
+                Добавить новый расход
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
     </div>
   )
 }
