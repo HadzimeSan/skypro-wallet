@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react'
 
-import bagIcon from '../../../bag.png'
-import carIcon from '../../../car.png'
-import houseIcon from '../../../house.png'
-import gameboyIcon from '../../../gameboy.png'
-import educationIcon from '../../../Vector.png'
-import otherIcon from '../../../message-text.png'
-import selectedCategoryIcon from '../../../Frame 1511838850.png'
+import bagIcon from '../assets/icons/bag.png'
+import carIcon from '../assets/icons/car.png'
+import houseIcon from '../assets/icons/house.png'
+import gameboyIcon from '../assets/icons/gameboy.png'
+import educationIcon from '../assets/icons/Vector.png'
+import otherIcon from '../assets/icons/message-text.png'
+import selectedCategoryIcon from '../assets/icons/Frame 1511838850.png'
 
 const CATEGORIES = [
   { label: 'Еда', icon: bagIcon },

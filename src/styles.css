@@ -24,12 +24,18 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  position: relative;
 }
 
 .app-header__brand {
-  font-weight: 700;
-  color: #111827;
-  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.app-header__logo {
+  width: 109px;
+  height: 24px;
+  object-fit: contain;
 }
 
 .app-header__nav {
@@ -39,15 +45,22 @@
   flex-wrap: wrap;
 }
 
+.app-header__nav--center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .app-btn {
-  padding: 7px 11px;
-  border-radius: 8px;
-  background: #f3f4f6;
+  padding: 6px 8px;
+  border-radius: 0;
+  background: transparent;
   color: #111827;
-  border: 1px solid #d1d5db;
+  border: none;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 12px;
+  border-bottom: 2px solid transparent;
 }
 
 .app-btn:disabled {
@@ -56,14 +69,13 @@
 }
 
 .app-btn--ghost {
-  background: #fff;
-  border: 1px solid #d1d5db;
+  border-bottom-color: transparent;
 }
 
 .app-btn--active {
-  background: #ebf7ee;
-  border-color: #9fdab0;
-  color: #2d7c48;
+  color: #7c3aed;
+  font-weight: 600;
+  border-bottom-color: #7c3aed;
 }
 
 .app-btn--primary {
@@ -408,6 +420,19 @@ textarea {
 }
 
 @media (max-width: 980px) {
+  .app-header__inner {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  .app-header__nav--center {
+    position: static;
+    transform: none;
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+
   .expenses-layout {
     grid-template-columns: 1fr;
   }
