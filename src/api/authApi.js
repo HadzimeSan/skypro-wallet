@@ -9,9 +9,10 @@ const client = axios.create({
 })
 
 function normalizeError(error) {
+  const data = error?.response?.data
   const message =
-    error?.response?.data?.error ||
-    error?.response?.data?.message ||
+    (typeof data === 'object' && (data.error || data.message)) ||
+    (typeof data === 'string' && data) ||
     error?.message ||
     'Ошибка запроса'
   return new Error(message)
